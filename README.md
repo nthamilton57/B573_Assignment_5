@@ -47,7 +47,7 @@ This repository is designed to servee as an extension to learning R in the realm
 
 5. The script will output results in the command line.
 
-6. Using each of the functions in the <code> GeoDE Package</code>  file, run the <code>GeoDE Vignette</code> R markdown file.
+6. Using each of the functions in the <code>GeoDE Package</code>  file, run the <code>GeoDE Vignette</code> R markdown file.
 
 
 ### Output Files
