@@ -1,0 +1,110 @@
+---
+title: "Assignment_5"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Assignment_5}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This begins by installing the packages that are used in this Vignette. To install the local GeoDE Package, change the file path to where you downloaded the package.
+```{r setup}
+install.packages('/Home/GeoDE Package/',type='source')
+BiocManager::install("GEOquery")
+BiocManager::install("limma")
+BiocManager::install("pheatmap")
+BiocManager::install("org.Hs.eg.db")
+BiocManager::install('ReactomePA')
+
+library(GeoDE)
+
+library("GEOquery")
+library("limma")
+library("pheatmap")
+library("org.Hs.eg.db")
+library("ReactomePA")
+library(ggplot2)
+library(ggrepel)
+```
+
+This demonstrates the import_GEO function that downloads the microarray experiment from GEO. From this function we can get phenotypic data, expression data, annotation data, and the object file.
+```{r Import GEO, message=FALSE}
+lists <- import_GEO('GSE33126')
+Phenotype_Data <- lists$Phenotype_Data
+Expression_Data <- lists$Expression_Data
+Annotation_Data <- lists$Annotation_Data
+Object_File <- lists$Object_file
+gse <- gse
+```
+
+The check values function returns a summary of the data and a box plot for each sample.
+```{r Check Values}
+check_values(Expression_Data)
+```
+
+This function will log normalize the data to make the values smaller and more manageable.
+```{r Log Normalize}
+Expression_Data <- log_normalize(Expression_Data)
+print(Expression_Data)
+```
+
+Here, we can use the check_values function to print a summary of the log normalized data and a box plot of the data.
+```{r Check Log Normalized Values}
+check_values(Expression_Data)
+```
+
+This function will only select certain characteristics that contain factors that will be needed for the analysis. From there, the columns can be renamed into more convenient column names.
+```{r Make samples simple}
+Phenotype_Data <- make_sample_simple(Phenotype_Data)
+```
+
+This function will create a correlation heat map that can show a separation in correlation values due to different groups. 
+```{r Pheatmap}
+make_correlation_and_pheatmap(Expression_Data, Phenotype_Data)
+```
+
+This package will take in the expression data and phenotypic data and perform PCA to reduce the number of dimensions and display the graph.
+```{r PCA}
+make_pca(Expression_Data,Phenotype_Data)
+```
+
+Conducts differential expression analysis on gene expression data. It creates a design matrix for linear modeling, distinguishing between the phenotypic gropus groups. The data is subset by filtering out genes with expression levels below the median in fewer than two samples. A linear model is fit to examine the impact of group membership on gene expression. A contrast is defined to specifically investigate the differences between groups. The analysis uses empirical Bayes smoothing to enhance statistical accuracy. A table of top differentially expressed genes is provided with additional information.
+```{r Differential Expression}
+difeq <- differential_expression_with_limma(Phenotype_Data,gse)
+```
+
+This function will find more information about each gene that is returned from the differential gene expression.
+```{r Make Annotations}
+difeq <- make_annotations(Object_File, difeq)
+```
+
+This will return a volcano plot that separates out the data based on p-value. Additionally this returns a list of the full results.
+```{r Volcano Plot}
+volcano <- make_volcano(difeq)
+volcano_plot <- volcano[[1]]
+print(volcano_plot)
+
+full_results <- volcano[[2]]
+```
+
+This function uses hypergeometric model to assess whether the number of selected genes associated with a reactome pathway is larger than expected dependent on a selected p value and log fold change cutoff value.
+```{r Use the identified DEGs to determine over-represented Reactome pathways}
+over_represented_pathways(full_results,0.05,0.01)
+```
+
+This function identifies pathways that are significantly enriched with genes that exhibit altered expression or biological activity under specific experimental conditions.
+```{r Perform Gene Set Enrichment analysis on your identified DEGs}
+gene_set_enrichment(full_results)
+```
+
+This function takes in a specific pathway and visualizes the reactome pathway.
+```{r Visualize your pathway as a network}
+visualize_pathway_network("Nitric oxide stimulates guanylate cyclase")
+```
+
+This function takes a data frame of top genes, sorts them based on log-fold changes, and then performs disease enrichment analysis. The results can help provide insights into diseases associated with the top genes.
+```{r Disease Enrichment Analysis of Top 20 Genes}
+library('DOSE')
+do_disease_enrichment_analysis(full_results)
+```
+
