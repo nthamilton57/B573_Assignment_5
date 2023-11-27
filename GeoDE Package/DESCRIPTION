@@ -1,0 +1,26 @@
+Package: GeoDE
+Title: Package to Perform Differential Expression from GEO
+Version: 0.0.0.1
+Authors@R: 
+    person("Noah", "Hamilton", , "nothamil@iu.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: In this gene expression analysis package, gene expression data is retrieved from the Gene Expression Omnibus (GEO) using the GEOquery package. The obtained data is then subjected to preprocessing steps, including log-normalization of gene expression, generation of a box plot for distribution visualization, selection and renaming of relevant columns in the phenotypic data, and the creation of a heatmap through clustering to visualize sample relationships based on expression profiles. Principal Component Analysis (PCA) is employed to reduce data dimensionality and produce a scatter plot. Differential expression analysis, utilizing the limma package, is conducted to identify significant gene expression differences between distinct groups (Normal and Tumour). Visualization of results encompasses the generation of a volcano plot and an MA plot to depict relationships between fold change, statistical significance, and average expression. Pathway analysis, facilitated by the ReactomePA package, identifies over-represented pathways associated with differentially expressed genes (DEGs), and Gene Set Enrichment Analysis (GSEA) visualizes pathways as networks. Lastly, disease enrichment analysis using the DOSE package is performed on the top 20 identified genes. The overall analysis integrates statistical methods, visualization techniques, and pathway analyses to elucidate molecular mechanisms and pathways linked to the investigated gene expression data.
+License: use_mit_license()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    dplyr (>= 1.1.3),
+    ggplot2,
+    BiocManager,
+    forcats,
+    stringr,
+    ggrepel,
+    readr,
+    tidyr,
+    survminer,
+    ReactomePA
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
